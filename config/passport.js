@@ -3,6 +3,8 @@ var LocalStrategy    = require('passport-local').Strategy;
 
 // load up the user model
 var User       = require('../app/models/user');
+var Account       = require('../app/models/account.js').accountSchema;
+// var Transaction       = require('../app/models/account.js').transactionSchema;
 
 
 module.exports = function(passport) {
@@ -67,10 +69,9 @@ module.exports = function(passport) {
         passwordField : 'password',
         passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
     },
-    function(req, name, email, password, done) {
+    function(req, email, password, done) {
         if (email)
             email = email.toLowerCase(); // Use lower-case e-mails to avoid case-sensitive e-mail matching
-
         // asynchronous
         process.nextTick(function() {
             // if the user is not already logged in:
@@ -89,7 +90,7 @@ module.exports = function(passport) {
                         // create the user
                         var newUser            = new User();
 
-                        newUser.local.name     = name;
+                        newUser.local.name     = req.body.name;
                         newUser.local.email    = email;
                         newUser.local.password = newUser.generateHash(password);
                         console.log('new', newUser);
@@ -115,7 +116,7 @@ module.exports = function(passport) {
                         // Using 'loginMessage instead of signupMessage because it's used by /connect/local'
                     } else {
                         var user = req.user;
-                        user.local.name = name;
+                        user.local.name = req.body.name;
                         user.local.email = email;
                         user.local.password = user.generateHash(password);
                         user.save(function (err) {
