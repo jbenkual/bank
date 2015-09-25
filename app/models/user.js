@@ -9,6 +9,7 @@ var transactionSchema = require('./account.js').transactionSchema;
 var userSchema = mongoose.Schema({
 
     local            : {
+        name         : String,
         email        : String,
         password     : String,
         accounts      : [{type: mongoose.Schema.ObjectId, ref: 'accountSchema'}]

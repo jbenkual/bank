@@ -46,11 +46,8 @@ module.exports = function(passport) {
                     return done(err);
 
                 // if no user is found, return the message
-                if (!user)
-                    return done(null, false, req.flash('loginMessage', 'No user found.'));
-
-                if (!user.validPassword(password))
-                    return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));
+                if (!user && !user.validPassword(password))
+                    return done(null, false, req.flash('loginMessage', 'You are oinking up the wrong bank!'));
 
                 // all is well, return user
                 else
@@ -65,11 +62,12 @@ module.exports = function(passport) {
     // =========================================================================
     passport.use('local-signup', new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
+        fullnameField : 'name',
         usernameField : 'email',
         passwordField : 'password',
         passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
     },
-    function(req, email, password, done) {
+    function(req, name, email, password, done) {
         if (email)
             email = email.toLowerCase(); // Use lower-case e-mails to avoid case-sensitive e-mail matching
 
@@ -84,15 +82,17 @@ module.exports = function(passport) {
 
                     // check to see if theres already a user with that email
                     if (user) {
+                        console.log('existing', user);
                         return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
                     } else {
 
                         // create the user
                         var newUser            = new User();
 
+                        newUser.local.name     = name;
                         newUser.local.email    = email;
                         newUser.local.password = newUser.generateHash(password);
-
+                        console.log('new', newUser);
                         newUser.save(function(err) {
                             if (err)
                                 return done(err);
@@ -115,6 +115,7 @@ module.exports = function(passport) {
                         // Using 'loginMessage instead of signupMessage because it's used by /connect/local'
                     } else {
                         var user = req.user;
+                        user.local.name = name;
                         user.local.email = email;
                         user.local.password = user.generateHash(password);
                         user.save(function (err) {
