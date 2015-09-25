@@ -3,13 +3,13 @@ var LocalStrategy    = require('passport-local').Strategy;
 
 // load up the user model
 var User       = require('../app/models/user');
-var Account       = require('../app/models/account.js').accountSchema;
+var Account       = require('../app/models/account').account;
 // var Transaction       = require('../app/models/account.js').transactionSchema;
 
 
 module.exports = function(passport) {
 
-    // =========================================================================
+    // =============================ƒ============================================
     // passport session setup ==================================================
     // =========================================================================
     // required for persistent login sessions
@@ -94,6 +94,18 @@ module.exports = function(passport) {
                         newUser.local.email    = email;
                         newUser.local.password = newUser.generateHash(password);
                         console.log('new', newUser);
+
+                        // create checking account
+                        newAccnt = new Account();
+                        newAccnt.name = "Checking";
+                        newAccnt.balance = 0.0;
+                        newUser.local.accounts.push(newAccnt);
+
+                        newAccnt.save(function(err) {
+                            if(err)
+                                console.error("Failed to create account for new user!");
+                        });
+
                         newUser.save(function(err) {
                             if (err)
                                 return done(err);
