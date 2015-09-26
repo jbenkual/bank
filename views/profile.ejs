@@ -22,18 +22,17 @@
     <!-- LOCAL INFORMATION -->
     <div class="small-6 columns">
       <div class="well">
-        <h3><span class="fa fa-user"></span> <%= user.local.name %></h3>
+        <h3><span class="fa fa-user"></span> <%= user %></h3>
           <p>
-            <strong>id</strong>: <%= user._id %><br>
-            <strong>email</strong>: <%= user.local.email %><br>
+            <strong>email</strong>: <%= user.email %><br>
           </p>
       </div>
     </div>
 
     <div class="small-6 columns">
-        <h3><span class="fa fa-dollar"></span> <%= user.local.name %></h3>
+        <h3><span class="fa fa-dollar"></span> <%= user.name %></h3>
           <p>
-            <strong>Balance:</strong>: <%=user.local.accounts%><br>
+            <strong>Balance</strong>: <%=user.accounts%><br>
             <table>
               <tr><td><strong>Transaction Log</strong></td></tr>
               <tr>

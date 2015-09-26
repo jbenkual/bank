@@ -14,6 +14,7 @@ var transactionSchema = mongoose.Schema({
   amount       : Number
 });
 
+exports.transactionSchema = transactionSchema;
 exports.transaction = mongoose.model('transaction', transactionSchema);
 
 
@@ -23,6 +24,7 @@ var accountSchema = mongoose.Schema({
   transactions  : [{type: mongoose.Schema.ObjectId, ref: 'TransactionSchema'}]
 });
 
+exports.accountSchema = accountSchema;
 accountSchema.methods.calcBalance = function() {
     this.balance = this.transactions.reduce(function (a,b) { return a+b.amount}, 0);
 };

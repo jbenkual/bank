@@ -36,8 +36,8 @@ module.exports = function(app, passport) {
         console.log("newT: ", newT);
 
         newT.save(function(err) {
-            console.log(user.local.accounts);
-            Account.find(user.local.accounts[0], function(err, account) {
+            console.log(user.accounts);
+            Account.find(user.accounts[0], function(err, account) {
                 account.transactions.push(newT._Id);
                 account.save();
                 res.sendStatus(200).send("Your money is safe with us!");
@@ -82,9 +82,6 @@ module.exports = function(app, passport) {
 // =============================================================================
 
     // locally --------------------------------
-        app.get('/connect/local', function(req, res) {
-            res.render('connect-local.ejs', { message: req.flash('loginMessage') });
-        });
         app.post('/connect/local', passport.authenticate('local-signup', {
             successRedirect : '/profile', // redirect to the secure profile section
             failureRedirect : '/connect/local', // redirect back to the signup page if there is an error

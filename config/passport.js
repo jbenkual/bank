@@ -42,7 +42,10 @@ module.exports = function(passport) {
 
         // asynchronous
         process.nextTick(function() {
-            User.findOne({ 'local.email' :  email }, function(err, user) {
+            User.findOne({ 'email' :  email })
+            .populate('accounts')
+            .exec(function(err, user) {
+                console.log(user);
                 // if there are any errors, return the error
                 if (err)
                     return done(err);
@@ -51,9 +54,13 @@ module.exports = function(passport) {
                 if (!user && !user.validPassword(password))
                     return done(null, false, req.flash('loginMessage', 'You are oinking up the wrong bank!'));
 
+
                 // all is well, return user
-                else
+                else {
+                    
                     return done(null, user);
+                }
+                    
             });
         });
 
@@ -90,16 +97,16 @@ module.exports = function(passport) {
                         // create the user
                         var newUser            = new User();
 
-                        newUser.local.name     = req.body.name;
-                        newUser.local.email    = email;
-                        newUser.local.password = newUser.generateHash(password);
+                        newUser.name     = req.body.name;
+                        newUser.email    = email;
+                        newUser.password = newUser.generateHash(password);
                         console.log('new', newUser);
 
                         // create checking account
                         newAccnt = new Account();
                         newAccnt.name = "Checking";
                         newAccnt.balance = 0.0;
-                        newUser.local.accounts.push(newAccnt);
+                        newUser.accounts.push(newAccnt);
 
                         newAccnt.save(function(err) {
                             if(err)
@@ -116,10 +123,10 @@ module.exports = function(passport) {
 
                 });
             // if the user is logged in but has no local account...
-            } else if ( !req.user.local.email ) {
+            } else if ( !req.user.email ) {
                 // ...presumably they're trying to connect a local account
                 // BUT let's check if the email used to connect a local account is being used by another user
-                User.findOne({ 'local.email' :  email }, function(err, user) {
+                User.findOne({ 'email' :  email }, function(err, user) {
                     if (err)
                         return done(err);
                     
@@ -127,15 +134,15 @@ module.exports = function(passport) {
                         return done(null, false, req.flash('loginMessage', 'That email is already taken.'));
                         // Using 'loginMessage instead of signupMessage because it's used by /connect/local'
                     } else {
-                        var user = req.user;
-                        user.local.name = req.body.name;
-                        user.local.email = email;
-                        user.local.password = user.generateHash(password);
-                        user.save(function (err) {
+                        var loadedUser = req.user;
+                        loadedUser.name = req.body.name;
+                        loadedUser.email = email;
+                        loadedUser.password = loadedUser.generateHash(password);
+                        loadedUser.save(function (err) {
                             if (err)
                                 return done(err);
                             
-                            return done(null,user);
+                            return done(null,loadedUser);
                         });
                     }
                 });
