@@ -27,14 +27,13 @@
             <strong>id</strong>: <%= user._id %><br>
             <strong>email</strong>: <%= user.local.email %><br>
           </p>
-
       </div>
     </div>
 
     <div class="small-6 columns">
         <h3><span class="fa fa-dollar"></span> <%= user.local.name %></h3>
           <p>
-            <strong>Balance:</strong>: $ -500.00<br>
+            <strong>Balance:</strong>: <%=user.local.accounts%><br>
             <table>
               <tr><td><strong>Transaction Log</strong></td></tr>
               <tr>
