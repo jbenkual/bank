@@ -4,8 +4,11 @@ var mongoose = require('mongoose');
 
 
 var transactionSchema = mongoose.Schema({
+  name          : String,
+  description   : String,
   sender        : String,
   recipient     : String,
+  date          : Date,
   senderId      : {type: mongoose.Schema.ObjectId, ref: 'UserSchema'},
   recipientId   : {type: mongoose.Schema.ObjectId, ref: 'UserSchema'},
   amount       : Number

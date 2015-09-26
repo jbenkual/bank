@@ -1,3 +1,6 @@
+var Account = require('./models/account.js').account;
+var Transaction = require('./models/account.js').transaction;
+
 module.exports = function(app, passport) {
 
 // normal routes ===============================================================
@@ -18,6 +21,28 @@ module.exports = function(app, passport) {
     app.get('/logout', function(req, res) {
         req.logout();
         res.redirect('/');
+    });
+
+    app.post('/user/transaction', isLoggedIn, function(req, res) {
+        var user            = req.user;
+        var newT            = new Transaction();
+        newT.name = req.body.name;
+        newT.amount = req.body.amount;
+        newT.date = Date.now();
+        newT.sender = req.body.sender;
+        newT.recipient = req.body.recipient;
+        newT.description = req.body.desc;
+
+        console.log("newT: ", newT);
+
+        newT.save(function(err) {
+            console.log(user.local.accounts);
+            Account.find(user.local.accounts[0], function(err, account) {
+                account.transactions.push(newT._Id);
+                account.save();
+                res.sendStatus(200).send("Your money is safe with us!");
+            })
+        });
     });
 
 // =============================================================================
