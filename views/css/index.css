@@ -1,0 +1,30 @@
+h1 {
+    color: rgb(52, 247, 139);
+    text-shadow: 2px 2px darkgreen;
+    font-family: 'Abril Fatface', cursive;
+}
+body { 
+    padding-top:80px; 
+    color: white;
+    text-shadow: 2px 2px black;
+    background-image: url('http://s1.picswalls.com/wallpapers/2014/08/11/money-desktop-wallpapers_090606472_192.jpg');
+    background-size: cover;
+    /*background-repeat: no-repeat;*/
+    /*background-image: url('http://wallpoper.com/images/00/34/75/81/coins-money_00347581.jpg')}*/
+}
+.footer      {margin-top: 10%;}
+.footerText  {background-color: rgba(0,0,0,0.7); }
+
+.myPanel {
+    background-color: rgba(0,0,0,0.8);
+    border: 2px solid silver;
+}
+
+.ceo {
+    margin-top: 20px;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+}

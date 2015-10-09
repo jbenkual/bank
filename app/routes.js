@@ -7,11 +7,13 @@ module.exports = function(app, passport) {
 
     // show the home page (will also have our login links)
     app.get('/', function(req, res) {
+        console.log(req.url);
         res.render('index.ejs');
     });
 
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function(req, res) {
+        console.log(req.user);
         res.render('profile.ejs', {
             user : req.user
         });
@@ -26,22 +28,31 @@ module.exports = function(app, passport) {
     app.post('/user/transaction', isLoggedIn, function(req, res) {
         var user            = req.user;
         var newT            = new Transaction();
+        if(typeof req.body.amount !== 'number') {
+            res.status(400).send({error: "Invalid transfer amount"});
+            return;
+        }
         newT.name = req.body.name;
-        newT.amount = req.body.amount;
+        newT.amount = Math.abs(req.body.amount);
         newT.date = Date.now();
         newT.sender = req.body.sender;
         newT.recipient = req.body.recipient;
-        newT.description = req.body.desc;
+        newT.description = req.body.description;
+
+        if(req.body.type === "Withdrawl") {
+            newT.amount = -1 * Math.abs(newT.amount);
+        }
 
         console.log("newT: ", newT);
 
         newT.save(function(err) {
             console.log(user.accounts);
-            Account.find(user.accounts[0], function(err, account) {
-                account.transactions.push(newT._Id);
-                account.save();
-                res.sendStatus(200).send("Your money is safe with us!");
-            })
+            var account = user.accounts[0];
+            account.transactions.push(newT._id);
+            account.save(function(err) {
+                console.log(account);
+            });
+            res.status(200).send({success: "Your money is safe with us!"});
         });
     });
 

@@ -1,0 +1,31 @@
+
+body { 
+  background-color: #333; 
+  word-wrap:break-word; 
+  color: white;
+}
+
+h1, h3 {
+  color: white;
+}
+
+
+.tLog {
+  background-color: rgba(200,225,250,0.7);
+  border: 3px solid silver;
+  border-radius: 15px;
+}
+
+.amount {
+  text-align: right;
+}
+
+
+.icon {
+    width: 20px;
+    height: 20px;
+}
+
+nav.nav,li.nav,ul.nav {
+  background-color: white;
+}

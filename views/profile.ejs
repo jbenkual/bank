@@ -6,35 +6,55 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/css/foundation.min.css">
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/css/normalize.min.css">
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-  <style>
-    body     { padding-top:80px; word-wrap:break-word; }
-  </style>
+  <link rel="stylesheet" type="text/css" href="static/css/profile.css">
 </head>
 <body>
-<div class="container">
 
-  <div class="page-header text-center">
-    <h1><span class="fa fa-anchor"></span> Salutations</h1>
-    <a href="/logout" class="button">Logout</a>
-  </div>
+  <nav class="top-bar" data-topbar role="navigation">
+    <ul class="title-area">
+      <li class="name">
+        <h1><a href="#">FSB</a></h1>
+      </li>
+       <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+      <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+    </ul>
+
+    <section class="top-bar-section">
+      <!-- Left Nav Section -->
+      <ul class="left">
+        <li><a href="#">New Account</a></li>
+      </ul>
+      <ul class="left">
+        <li><a href="#">Settings</a></li>
+      </ul>
+      <ul class="left">
+        <li><a href="#">Support</a></li>
+      </ul>
+      <ul class="left">
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+    </section>
+  </nav>
 
   <div class="row">
     <!-- LOCAL INFORMATION -->
-    <div class="small-6 columns">
+    <div class="small-12 medium-4 columns">
       <div class="well">
-        <h3><span class="fa fa-user"></span> <%= user %></h3>
+        <h3><img class="icon" src="static/img/pig-128.png"> <%= user.name %></h3>
           <p>
             <strong>email</strong>: <%= user.email %><br>
           </p>
       </div>
     </div>
 
-    <div class="small-6 columns">
+    <div class="small-12 columns medium-8">
         <% for(var account of user.accounts) { %>
         <h3><span class="fa fa-dollar"></span> <%= account.name %></h3>
+        <a onclick="setData(true, '<%=account._id%>')" data-reveal-id="myModal" class="button radius small">Withdraw</a>
+        <a onclick="setData(false, '<%=account._id%>')" data-reveal-id="myModal" class="button radius small">Deposit</a>
         <p>
           <strong>Balance</strong>: <%=parseFloat(account.balance).toFixed(2)%><br>
-          <table>
+          <table class="tLog">
             
             <tr><td><strong>Transaction Log</strong></td></tr>
             <tr>
@@ -44,29 +64,29 @@
             </tr>
             <% for(var transaction of account.transactions) { %>
             <tr>
-              <td><%= transaction.date %></td>
-              <td><%= transaction.amount %></td>
+              <td><%= transaction.date.toString().split(" ").slice(0, -2).join(" ") %></td>
+              <td class="text-right amount"><%= parseFloat(transaction.amount).toFixed(2) %></td>
               <td><%= transaction.description %></td>
             </tr>
             <% } %>
           </table>
         </p>
         <% } %>
-        <a onclick="tNegative(true, <%= %>)" data-reveal-id="myModal" class="button">Make a Withdrawal</a>
-        <a onclick="tNegative(false)" data-reveal-id="myModal" class="button">Make a Deposit</a>
       </div>
   </div>
 
   <div id="myModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
     <a class="close-reveal-modal" aria-label="Close">&#215;</a>
     <h4 class="modal-title">Please Confirm this Transaction 
-      <% var d = new Date();
+      <% 
+        var d = new Date();
 
-      var month = d.getMonth()+1;
-      var day = d.getDate();
+        var month = d.getMonth()+1;
+        var day = d.getDate();
 
-      var output =  (month<10 ? '0' : '') + month + '/' +
-        (day<10 ? '0' : '') + day + '/' + d.getFullYear()%>
+        var output =  (month<10 ? '0' : '') + month + '/' +
+          (day<10 ? '0' : '') + day + '/' + d.getFullYear()
+      %>
 
        <%=output%>
     </h4>
@@ -80,39 +100,14 @@
     </div>
     <hr>
     <div class="row">
-        <div class="small-8 columns small-centered">
-            <button type="button" class="button" data-dismiss="modal">Cancel</button>
-            <button type="button" class="button" id="confirm">Make Deposit</button>
-        </div>
+      <button id="cancel" type="button" class="button">Cancel</button>
+      <button id="confirm" type="button" class="button">Make Deposit</button>
     </div>
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/js/foundation.min.js"></script>
 
-  <script type="text/javascript">
-  $(document).foundation();
-    var negative = false;
-    var tNegative = function(bool) { negative = bool}
-    var transaction = function() {
-      var data = { 
-        amount: $("#amount").val(), 
-        description: $("#desc").val(),
-        name: tNegative ? "Withdrawal" : "Deposit",
-        account: 
-      }
-       // if(negative) { data.amount = "-" + data.amount}
-        console.log(data);
-      $.post("/user/transaction", data, function(err, success){
-        if (err) {
-          console.log("Error. ", error);
-        } else {
-          console.log("success");
-        }
-      })
-    }
-
-    $("#confirm").on('click', transaction);
-  </script>
+  <script src="static/js/profile.js"></script>
 </body>
 </html>

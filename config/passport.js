@@ -4,7 +4,7 @@ var LocalStrategy    = require('passport-local').Strategy;
 // load up the user model
 var User       = require('../app/models/user');
 var Account       = require('../app/models/account').account;
-// var Transaction       = require('../app/models/account.js').transactionSchema;
+var Transaction       = require('../app/models/account.js').transaction;
 
 
 module.exports = function(passport) {
@@ -22,8 +22,13 @@ module.exports = function(passport) {
 
     // used to deserialize the user
     passport.deserializeUser(function(id, done) {
-        User.findById(id, function(err, user) {
+        User.findById(id).populate({path: 'accounts'}).exec(function(err, user) {
+            Account.populate(user, {path: 'accounts.transactions', model: Transaction}, function(err, data) {
+                console.log("data2", data);
+                console.log("data", user);
             done(err, user);
+            })
+            
         });
     });
 
@@ -43,23 +48,20 @@ module.exports = function(passport) {
         // asynchronous
         process.nextTick(function() {
             User.findOne({ 'email' :  email })
-            .populate('accounts')
             .exec(function(err, user) {
-                console.log(user);
+                
                 // if there are any errors, return the error
                 if (err)
                     return done(err);
 
                 // if no user is found, return the message
-                if (!user && !user.validPassword(password))
+                if (!user || !user.validPassword(password))
                     return done(null, false, req.flash('loginMessage', 'You are oinking up the wrong bank!'));
 
 
                 // all is well, return user
-                else {
-                    
+                else
                     return done(null, user);
-                }
                     
             });
         });
@@ -90,10 +92,9 @@ module.exports = function(passport) {
 
                     // check to see if theres already a user with that email
                     if (user) {
-                        console.log('existing', user);
-                        return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
+                        return done(null, false, req.flash('signupMessage', 'That little piggy already went to the bank.'));
                     } else {
-
+                        
                         // create the user
                         var newUser            = new User();
 
@@ -110,7 +111,7 @@ module.exports = function(passport) {
 
                         newAccnt.save(function(err) {
                             if(err)
-                                console.error("Failed to create account for new user!");
+                                console.error("This place is a sty! Come back later.");
                         });
 
                         newUser.save(function(err) {
