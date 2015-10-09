@@ -2,7 +2,7 @@
 <!doctype html>
 <html>
 <head>
-  <title>Node Authentication</title>
+  <title>First Suidae Bank</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/css/foundation.min.css">
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/css/normalize.min.css">
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
@@ -40,7 +40,7 @@
     <!-- LOCAL INFORMATION -->
     <div class="small-12 medium-4 columns">
       <div class="well">
-        <h3><img class="icon" src="static/img/pig-128.png"> <%= user.name %></h3>
+        <h3><img class="icon" src="static/img/pig-128.png"> <span id="username"><%= user.name %></span></h3>
           <p>
             <strong>email</strong>: <%= user.email %><br>
           </p>
@@ -50,8 +50,9 @@
     <div class="small-12 columns medium-8">
         <% for(var account of user.accounts) { %>
         <h3><span class="fa fa-dollar"></span> <%= account.name %></h3>
-        <a onclick="setData(true, '<%=account._id%>')" data-reveal-id="myModal" class="button radius small">Withdraw</a>
-        <a onclick="setData(false, '<%=account._id%>')" data-reveal-id="myModal" class="button radius small">Deposit</a>
+        <a onclick="setData(1, '<%=account._id%>')" data-reveal-id="myModal" class="button radius small">Withdraw</a>
+        <a onclick="setData(2, '<%=account._id%>')" data-reveal-id="myModal" class="button radius small">Deposit</a>
+        <a onclick="setData(3, '<%=account._id%>')" data-reveal-id="myModal" class="button radius small">Transfer</a>
         <p>
           <strong>Balance</strong>: <%=parseFloat(account.balance).toFixed(2)%><br>
           <table class="tLog">
@@ -91,12 +92,16 @@
        <%=output%>
     </h4>
     <div>
+      <label id="recipientLabel">Recipient </label> 
+      <input id="recipient" class="input" placeholder="" style="text-align: left"> </input>
+    </div>
+    <div>
       <label>Amount </label> 
-      <input id="amount" placeholder="0.00" style="text-align: right"> </input>
+      <input id="amount" class="input" placeholder="0.00" style="text-align: right"> </input>
     </div>
     <div>
       <label>Description </label> 
-      <input id="desc" placeholder="" style="text-align: right"> </input>
+      <input id="desc" class="input" placeholder="" style="text-align: left"> </input>
     </div>
     <hr>
     <div class="row">

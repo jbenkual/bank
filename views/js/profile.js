@@ -1,21 +1,34 @@
 $(document).foundation();
 var negative = false;
 var accountId = "";
-var setData = function(bool, accnt) { 
-  if(bool) {
+var setData = function(type, accnt) { 
+  if(type === 1) {
     $('#confirm').text("Make Withdrawl");
+    $('#recipientLabel').hide();
+    $('#recipient').hide();
+  }
+  else if(type === 2) {
+    $('#confirm').text("Make Deposit");
+    $('#recipientLabel').hide();
+    $('#recipient').hide();
   }
   else {
-    $('#confirm').text("Make Deposit");
+    $('#confirm').text("Make Transfer");
+    $('#recipientLabel').show();
+    $('#recipient').show();
   }
-  negative = bool;
+
+  negative = type === 2;
   accountId = accnt;
 };
 var transaction = function() {
+  var amount = parseFloat($("#amount").val());
+  console.log(typeof amount);
   var data = { 
-    amount: $("#amount").val(), 
+    amount: amount, 
     description: $("#desc").val(),
     name: negative ? "Withdrawal" : "Deposit",
+    type: negative ? "Withdrawal" : "Deposit",
     account: accountId
   };
    // if(negative) { data.amount = "-" + data.amount}
@@ -26,7 +39,7 @@ var transaction = function() {
     console.log("success");
   })
   .fail(function (err) {
-    console.err("Error: ", err);
+    console.error("Error: ", err);
   });
 };
 

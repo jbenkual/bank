@@ -13,7 +13,7 @@ module.exports = function(app, passport) {
 
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function(req, res) {
-        console.log(req.user);
+        //console.log(req.user);
         res.render('profile.ejs', {
             user : req.user
         });
@@ -28,29 +28,35 @@ module.exports = function(app, passport) {
     app.post('/user/transaction', isLoggedIn, function(req, res) {
         var user            = req.user;
         var newT            = new Transaction();
-        if(typeof req.body.amount !== 'number') {
+        var amount = parseFloat(req.body.amount);
+        if(!amount || typeof amount !== 'number' || isNaN(amount)) {
+            console.log("type: " + typeof req.body.amount);
             res.status(400).send({error: "Invalid transfer amount"});
             return;
         }
         newT.name = req.body.name;
-        newT.amount = Math.abs(req.body.amount);
+        newT.amount = Math.abs(amount);
         newT.date = Date.now();
-        newT.sender = req.body.sender;
-        newT.recipient = req.body.recipient;
+        newT.sender = req.user._id;
+        newT.recipient = req.body.recipient ? req.body.recipient : req.user._id;
         newT.description = req.body.description;
+        newT.type = req.body.type;
+        console.log(req.body.type)
 
-        if(req.body.type === "Withdrawl") {
+        if(req.body.type === "Withdrawal") {
             newT.amount = -1 * Math.abs(newT.amount);
         }
+
 
         console.log("newT: ", newT);
 
         newT.save(function(err) {
-            console.log(user.accounts);
+            //console.log(user.accounts);
             var account = user.accounts[0];
             account.transactions.push(newT._id);
+            account.calcBalance();
             account.save(function(err) {
-                console.log(account);
+                //console.log(account);
             });
             res.status(200).send({success: "Your money is safe with us!"});
         });

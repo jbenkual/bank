@@ -11,11 +11,13 @@ var transactionSchema = mongoose.Schema({
   date          : Date,
   senderId      : {type: mongoose.Schema.ObjectId, ref: 'UserSchema'},
   recipientId   : {type: mongoose.Schema.ObjectId, ref: 'UserSchema'},
-  amount       : Number
+  amount        : Number,
+  type          : String
 });
 
 exports.transactionSchema = transactionSchema;
-exports.transaction = mongoose.model('transaction', transactionSchema);
+var Transaction = mongoose.model('transaction', transactionSchema);
+exports.transaction = Transaction;
 
 
 var accountSchema = mongoose.Schema({
@@ -26,7 +28,14 @@ var accountSchema = mongoose.Schema({
 
 exports.accountSchema = accountSchema;
 accountSchema.methods.calcBalance = function() {
-    this.balance = this.transactions.reduce(function (a,b) { return a+b.amount}, 0);
+  console.log('\n\n\n ----------------\n\n calculate balance\n\n ---------------\n\n\n')
+  Transaction.populate(this, {path: "transactions"}, function(err, account) {
+    account.balance = account.transactions.reduce(function (a,b) { 
+      console.log(typeof a, a, typeof b.amount, b.amount);
+      return a+b.amount
+    }, 0);
+    account.save();
+  });  
 };
 
 exports.account = mongoose.model('account', accountSchema);

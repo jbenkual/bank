@@ -24,8 +24,8 @@ module.exports = function(passport) {
     passport.deserializeUser(function(id, done) {
         User.findById(id).populate({path: 'accounts'}).exec(function(err, user) {
             Account.populate(user, {path: 'accounts.transactions', model: Transaction}, function(err, data) {
-                console.log("data2", data);
-                console.log("data", user);
+                //console.log("data2", data);
+                //console.log("data", user);
             done(err, user);
             })
             
@@ -101,7 +101,7 @@ module.exports = function(passport) {
                         newUser.name     = req.body.name;
                         newUser.email    = email;
                         newUser.password = newUser.generateHash(password);
-                        console.log('new', newUser);
+                        //console.log('new', newUser);
 
                         // create checking account
                         newAccnt = new Account();

@@ -1,6 +1,6 @@
 
 body { 
-  background-color: #333; 
+  background-color: #666; 
   word-wrap:break-word; 
   color: white;
 }
@@ -12,7 +12,7 @@ h1, h3 {
 
 .tLog {
   background-color: rgba(200,225,250,0.7);
-  border: 3px solid silver;
+  border: 0px solid silver;
   border-radius: 15px;
 }
 
@@ -28,4 +28,12 @@ h1, h3 {
 
 nav.nav,li.nav,ul.nav {
   background-color: white;
+}
+
+.input {
+    color:black;
+}
+
+.hidden {
+  display: none;
 }
